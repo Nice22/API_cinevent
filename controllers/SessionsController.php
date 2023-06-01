@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE' && isset($_GET['id'])) {
 function getAllSessions() {
     global $sessionModel;
     $sessions = $sessionModel->getAllSessions();
+    header('Content-Type: application/json');
     echo json_encode($sessions);
 }
 
@@ -43,6 +44,7 @@ function getSessionById() {
     global $sessionModel;
     $id = $_GET['id'];
     $session = $sessionModel->getSession($id);
+    header('Content-Type: application/json');
     echo json_encode($session);
 }
 
@@ -50,6 +52,8 @@ function addSession() {
     global $sessionModel;
     $data = json_decode(file_get_contents('php://input'), true);
     $sessionModel->addSession($data);
+    header('Content-Type: application/json');
+    echo json_encode(['message' => 'Session ajoutée avec succès']);
 }
 
 function updateSession() {
@@ -57,12 +61,16 @@ function updateSession() {
     $id = $_GET['id'];
     $data = json_decode(file_get_contents('php://input'), true);
     $sessionModel->updateSession($id, $data);
+    header('Content-Type: application/json');
+    echo json_encode(['message' => 'Session mise à jour avec succès']);
 }
 
 function deleteSession() {
     global $sessionModel;
     $id = $_GET['id'];
     $sessionModel->deleteSession($id);
+    header('Content-Type: application/json');
+    echo json_encode(['message' => 'Session supprimée avec succès']);
 }
 
 ?>

@@ -1,28 +1,68 @@
 <?php
 
+require_once('core/database.php');
 require_once('models/PaymentsModel.php');
 
-class PaymentsController {
-    private $paymentsModel;
+$database = new Database();
+$dbh = $database->getDBConnection();
 
-    public function __construct() {
-        $this->paymentsModel = new PaymentsModel();
-    }
+$paymentsModel = new PaymentsModel($dbh);
 
-    public function addPayment($status, $userNumber, $clientEmail, $clientName, $sessionId) {
-        // Effectuer les validations nécessaires sur les données reçues
+// GET all payments
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && !isset($_GET['id'])) {
+    getAllPayments();
+}
 
-        // Appeler la méthode addPayment du modèle pour ajouter le paiement
-        $result = $this->paymentsModel->addPayment($status, $userNumber, $clientEmail, $clientName, $sessionId);
+// GET payment by ID
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
+    getPaymentById();
+}
 
-        if ($result) {
-            // Paiement ajouté avec succès
-            echo 'Paiement effectué avec succès !';
-        } else {
-            // Erreur lors de l'ajout du paiement
-            echo 'Erreur lors du paiement. Veuillez réessayer.';
-        }
-    }
+// POST add payment
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    addPayment();
+}
+
+// PUT update payment
+if ($_SERVER['REQUEST_METHOD'] === 'PUT' && isset($_GET['id'])) {
+    updatePayment();
+}
+
+// DELETE delete payment
+if ($_SERVER['REQUEST_METHOD'] === 'DELETE' && isset($_GET['id'])) {
+    deletePayment();
+}
+
+function getAllPayments() {
+    global $paymentsModel;
+    $payments = $paymentsModel->getAllPayments();
+    echo json_encode($payments);
+}
+
+function getPaymentById() {
+    global $paymentsModel;
+    $id = $_GET['id'];
+    $payment = $paymentsModel->getPayment($id);
+    echo json_encode($payment);
+}
+
+function addPayment() {
+    global $paymentsModel;
+    $data = json_decode(file_get_contents('php://input'), true);
+    $paymentsModel->addPayment($data);
+}
+
+function updatePayment() {
+    global $paymentsModel;
+    $id = $_GET['id'];
+    $data = json_decode(file_get_contents('php://input'), true);
+    $paymentsModel->updatePayment($id, $data);
+}
+
+function deletePayment() {
+    global $paymentsModel;
+    $id = $_GET['id'];
+    $paymentsModel->deletePayment($id);
 }
 
 ?>

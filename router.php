@@ -23,40 +23,40 @@ $requestPath = substr($requestUri, strlen($baseUrl));
 // Define the routes
 $routes = [
     '/movies' => [
-        'GET' => 'getAllMovies',
-        'POST' => 'addMovie'
+        'GET' => ['MoviesController', 'getAllMovies'],
+        'POST' => ['MoviesController', 'addMovie']
     ],
     '/movies/{id}' => [
-        'GET' => 'getMovieById',
-        'PUT' => 'updateMovie',
-        'DELETE' => 'deleteMovie'
+        'GET' => ['MoviesController', 'getMovieById'],
+        'PUT' => ['MoviesController', 'updateMovie'],
+        'DELETE' => ['MoviesController', 'deleteMovie']
     ],
     '/payments' => [
-        'GET' => 'getAllPayments',
-        'POST' => 'addPayment'
+        'GET' => ['PaymentsController', 'getAllPayments'],
+        'POST' => ['PaymentsController', 'addPayment']
     ],
     '/payments/{id}' => [
-        'GET' => 'getPaymentById',
-        'PUT' => 'updatePayment',
-        'DELETE' => 'deletePayment'
+        'GET' => ['PaymentsController', 'getPaymentById'],
+        'PUT' => ['PaymentsController', 'updatePayment'],
+        'DELETE' => ['PaymentsController', 'deletePayment']
     ],
     '/sessions' => [
-        'GET' => 'getAllSessions',
-        'POST' => 'addSession'
+        'GET' => ['SessionsController', 'getAllSessions'],
+        'POST' => ['SessionsController', 'addSession']
     ],
     '/sessions/{id}' => [
-        'GET' => 'getSessionById',
-        'PUT' => 'updateSession',
-        'DELETE' => 'deleteSession'
+        'GET' => ['SessionsController', 'getSessionById'],
+        'PUT' => ['SessionsController', 'updateSession'],
+        'DELETE' => ['SessionsController', 'deleteSession']
     ],
     '/trailers' => [
-        'GET' => 'getAllTrailers',
-        'POST' => 'addTrailer'
+        'GET' => ['TrailersController', 'getAllTrailers'],
+        'POST' => ['TrailersController', 'addTrailer']
     ],
     '/trailers/{id}' => [
-        'GET' => 'getTrailerById',
-        'PUT' => 'updateTrailer',
-        'DELETE' => 'deleteTrailer'
+        'GET' => ['TrailersController', 'getTrailerById'],
+        'PUT' => ['TrailersController', 'updateTrailer'],
+        'DELETE' => ['TrailersController', 'deleteTrailer']
     ],
 ];
 
@@ -68,10 +68,13 @@ foreach ($routes as $route => $methods) {
         if (isset($methods[$requestMethod])) {
             $routeFound = true;
             $method = $methods[$requestMethod];
+            $controllerName = $method[0];
+            $methodName = $method[1];
             $args = array_slice($matches, 1);
 
             // Call the corresponding controller method
-            call_user_func_array($method, $args);
+            $controller = new $controllerName();
+            call_user_func_array([$controller, $methodName], $args);
             break;
         }
     }
