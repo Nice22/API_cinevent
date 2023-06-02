@@ -50,6 +50,8 @@ function addPayment() {
     global $paymentsModel;
     $data = json_decode(file_get_contents('php://input'), true);
     $paymentsModel->addPayment($data);
+    header('Content-Type: application/json');
+    echo json_encode(['message' => 'Payment ajouté avec succès']);
 }
 
 function updatePayment() {
@@ -57,12 +59,16 @@ function updatePayment() {
     $id = $_GET['id'];
     $data = json_decode(file_get_contents('php://input'), true);
     $paymentsModel->updatePayment($id, $data);
+    header('Content-Type: application/json');
+    echo json_encode(['message' => 'Payment mis à jour avec succès']);
 }
 
 function deletePayment() {
     global $paymentsModel;
     $id = $_GET['id'];
     $paymentsModel->deletePayment($id);
+    header('Content-Type: application/json');
+    echo json_encode(['message' => 'Payment supprimé avec succès']);
 }
 
 ?>

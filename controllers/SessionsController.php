@@ -36,6 +36,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE' && isset($_GET['id'])) {
 function getAllSessions() {
     global $sessionModel;
     $sessions = $sessionModel->getAllSessions();
+
+    // Récupérer le nombre de passes restantes pour chaque session
+    foreach ($sessions as &$session) {
+        $remainingPasses = $sessionModel->getRemainingPasses($session['id']);
+        $session['remaining_passes'] = $remainingPasses;
+    }
+
     header('Content-Type: application/json');
     echo json_encode($sessions);
 }
@@ -44,6 +51,11 @@ function getSessionById() {
     global $sessionModel;
     $id = $_GET['id'];
     $session = $sessionModel->getSession($id);
+
+    // Récupérer le nombre de passes restantes pour la session
+    $remainingPasses = $sessionModel->getRemainingPasses($id);
+    $session['remaining_passes'] = $remainingPasses;
+
     header('Content-Type: application/json');
     echo json_encode($session);
 }
